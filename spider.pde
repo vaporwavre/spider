@@ -1,8 +1,5 @@
-final int CEPHALOTHORAX_SIZE = 169; //<>//
+final int CEPHALOTHORAX_SIZE = 169; //<>// //<>//
 final int MAX_EYES = 30;
-final int EYE_WIDTH = 10;
-final float EYE_HEIGHT = EYE_WIDTH - 4.20;
-final int EYE_COLOR = 255;
 
 int eyeCount = 0;
 float cephalothoraxCenterX, cephalothoraxCenterY;
@@ -99,22 +96,6 @@ boolean eyeOverlaps(Eye eye) {
     }
   }
   return false;
-}
-
-class Eye
-{
-  float xPosition, yPosition;
-  int eyeWidth; 
-  float eyeHeight;
-  boolean closing;
-
-  Eye(float xPosition, float yPosition) {
-    this.xPosition = xPosition;
-    this.yPosition = yPosition;
-    this.eyeWidth = EYE_WIDTH;
-    this.eyeHeight = EYE_HEIGHT;
-    closing = randomBool();
-  }
 }
 
 boolean randomBool() {
