@@ -1,5 +1,6 @@
-final int CEPHALOTHORAX_SIZE = 169; //<>// //<>//
-final int MAX_EYES = 30;
+final int CEPHALOTHORAX_SIZE = 169; //<>//
+final int MAX_EYES = 22;
+final float[][] CEPHALOTHORAX_DEVIATIONS = getCephalothoraxDeviations();
 
 int eyeCount = 0;
 float cephalothoraxCenterX, cephalothoraxCenterY;
@@ -52,8 +53,8 @@ void initEyes() {
   float radius = CEPHALOTHORAX_SIZE/2;
   fill(EYE_COLOR);
   for (int i = 0; i < MAX_EYES; i++) {
-    float randomX = random(cephalothoraxCenterX + radius);
-    float randomY = random(cephalothoraxCenterY + radius);
+    float randomX = random(cephalothoraxCenterX + radius + 15);
+    float randomY = random(cephalothoraxCenterY + radius + 15);
     Eye newEye = new Eye(randomX, randomY);
     if (!eyeOverlaps(newEye) && dist(cephalothoraxCenterX, cephalothoraxCenterY, randomX, randomY) < (radius - 4.20) && (randomY > cephalothoraxCenterY + 15)) {
       eyes[eyeCount] = newEye;
@@ -73,19 +74,31 @@ void drawCephalothorax() {
   float lastx = -999;
   float lasty = -999;
   beginShape();
+  int deviationIndex;
   for (float ang = 0; ang <= 360; ang += 5) {
+    deviationIndex = ang == 0 ? 0 : round(ang/5);
+    
     radius += 0.5;
     float rad = radians(ang);
-    x = cephalothoraxCenterX + (radius * cos(rad) + random(1, 15));
-    y = cephalothoraxCenterY + (radius * sin(rad) + random(1, 15));
+    x = cephalothoraxCenterX + (radius * cos(rad) + CEPHALOTHORAX_DEVIATIONS[deviationIndex][0]); //<>//
+    y = cephalothoraxCenterY + (radius * sin(rad) + CEPHALOTHORAX_DEVIATIONS[deviationIndex][1]);
     if (lastx > -999) {
       line(x, y, lastx, lasty);
     }
-    vertex(x,y);
+    vertex(x, y);
     lastx = x;
     lasty = y;
   }
   endShape(CLOSE);
+}
+
+float[][] getCephalothoraxDeviations(){
+  float[][] result = new float[73][2];
+  for(int i = 0; i < result.length; i++){
+    result[i][0] = random(1,15);
+    result[i][1] = random(1,15);
+  }
+  return result;
 }
 
 boolean eyeOverlaps(Eye eye) {
