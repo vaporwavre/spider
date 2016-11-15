@@ -6,7 +6,7 @@ float jointTwoGrowth = 0.25;
 int eyeCount = 0;
 float cephalothoraxCenterX, cephalothoraxCenterY;
 float[][] legEnds = new float[73][2];
-float[][] firstJointEndPoints = new float[73][2];
+float[][] jointOneEndPoints = new float[73][2];
 Eye[] eyes = new Eye[MAX_EYES];
 
 void setup()
@@ -80,6 +80,8 @@ void drawCephalothorax() {
   float x, y;
   float lastx = -999;
   float lasty = -999;
+  final float JOINT_ONE_LENGTH = 25;
+  final float JOINT_TWO_LENGTH = 42;
   beginShape();
   int singleIncrementIndex;
   for (float ang = 0; ang <= 360; ang += 5) {
@@ -96,8 +98,7 @@ void drawCephalothorax() {
     }
 
     //legs
-    boolean jointOneComplete = (dist(x, y, legEnds[singleIncrementIndex][0], legEnds[singleIncrementIndex][1]) >= 42) && legEnds[singleIncrementIndex][0] != 0;
-
+    boolean jointOneComplete = (dist(x, y, legEnds[singleIncrementIndex][0], legEnds[singleIncrementIndex][1]) >= JOINT_ONE_LENGTH) && legEnds[singleIncrementIndex][0] != 0;
     if (!jointOneComplete) {
       if (x < cephalothoraxCenterX & !jointOneComplete) {
         legEnds[singleIncrementIndex][0] = x - jointOneGrowth;
@@ -112,16 +113,16 @@ void drawCephalothorax() {
       }
       legEnds[singleIncrementIndex][1] += random(3) - 3;
       line(x, y, legEnds[singleIncrementIndex][0], legEnds[singleIncrementIndex][1]);
-      firstJointEndPoints[singleIncrementIndex][0] = legEnds[singleIncrementIndex][0];
-      firstJointEndPoints[singleIncrementIndex][1] = legEnds[singleIncrementIndex][1];
+      jointOneEndPoints[singleIncrementIndex][0] = legEnds[singleIncrementIndex][0];
+      jointOneEndPoints[singleIncrementIndex][1] = legEnds[singleIncrementIndex][1];
     } else {
-      line(x, y, firstJointEndPoints[singleIncrementIndex][0], firstJointEndPoints[singleIncrementIndex][1]);
-      line(firstJointEndPoints[singleIncrementIndex][0], firstJointEndPoints[singleIncrementIndex][1], legEnds[singleIncrementIndex][0] + (random(3) - 3), legEnds[singleIncrementIndex][1] + jointTwoGrowth);
+      line(x, y, jointOneEndPoints[singleIncrementIndex][0], jointOneEndPoints[singleIncrementIndex][1]);
+      line(jointOneEndPoints[singleIncrementIndex][0], jointOneEndPoints[singleIncrementIndex][1], legEnds[singleIncrementIndex][0] + (random(3) - 3), legEnds[singleIncrementIndex][1] + jointTwoGrowth);
     }
   }
   endShape(CLOSE);
-  if (jointOneGrowth > 42) {
-    if (jointTwoGrowth < 69)
+  if (jointOneGrowth > JOINT_ONE_LENGTH) {
+    if (jointTwoGrowth < JOINT_TWO_LENGTH)
       jointTwoGrowth += 0.25;
   } else
     jointOneGrowth += 0.25;
