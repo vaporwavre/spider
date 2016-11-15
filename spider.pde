@@ -1,17 +1,24 @@
 final int CEPHALOTHORAX_SIZE = 169; //<>//
 final int MAX_EYES = 22;
-final float[][] CEPHALOTHORAX_DEVIATIONS = getCephalothoraxDeviations();
-
+float[][] cephalothoraxDeviations = getCephalothoraxDeviations();
+float jointOneGrowth = 0.25;
+float jointTwoGrowth = 0.25;
 int eyeCount = 0;
 float cephalothoraxCenterX, cephalothoraxCenterY;
+float[][] legEnds = new float[73][2];
+float[][] firstJointEndPoints = new float[73][2];
 Eye[] eyes = new Eye[MAX_EYES];
 
 void setup()
 {
+  for (int i = 0; i < legEnds.length; i++) {
+    legEnds[i][0] = 0;
+    legEnds[i][1] = 0;
+  }
   frameRate(24);
-  size(420, 666);
+  size(420, 420);
   cephalothoraxCenterX = width/2;
-  cephalothoraxCenterY = height/1.69;
+  cephalothoraxCenterY = height/2;
   background(255, 0, 0);
   smooth();
   drawCephalothorax();
@@ -20,6 +27,7 @@ void setup()
 
 void draw() {
   background(255, 0, 0);
+  cephalothoraxDeviations = getCephalothoraxDeviations();
   drawCephalothorax();
   animateEyes();
 }
@@ -67,36 +75,63 @@ void initEyes() {
 }
 
 void drawCephalothorax() {
-  noStroke();
   fill(0);
   int radius = CEPHALOTHORAX_SIZE/2;
   float x, y;
   float lastx = -999;
   float lasty = -999;
   beginShape();
-  int deviationIndex;
+  int singleIncrementIndex;
   for (float ang = 0; ang <= 360; ang += 5) {
-    deviationIndex = ang == 0 ? 0 : round(ang/5);
-    
+    singleIncrementIndex = ang == 0 ? 0 : round(ang/5);
     radius += 0.5;
     float rad = radians(ang);
-    x = cephalothoraxCenterX + (radius * cos(rad) + CEPHALOTHORAX_DEVIATIONS[deviationIndex][0]); //<>//
-    y = cephalothoraxCenterY + (radius * sin(rad) + CEPHALOTHORAX_DEVIATIONS[deviationIndex][1]);
-    if (lastx > -999) {
-      line(x, y, lastx, lasty);
-    }
+    x = cephalothoraxCenterX + (radius * cos(rad) + cephalothoraxDeviations[singleIncrementIndex][0]);
+    y = cephalothoraxCenterY + (radius * sin(rad) + cephalothoraxDeviations[singleIncrementIndex][1]);
     vertex(x, y);
     lastx = x;
     lasty = y;
+    if (lastx > -999) {
+      line(x, y, lastx, lasty);
+    }
+
+    //legs
+    boolean jointOneComplete = (dist(x, y, legEnds[singleIncrementIndex][0], legEnds[singleIncrementIndex][1]) >= 42) && legEnds[singleIncrementIndex][0] != 0;
+
+    if (!jointOneComplete) {
+      if (x < cephalothoraxCenterX & !jointOneComplete) {
+        legEnds[singleIncrementIndex][0] = x - jointOneGrowth;
+      } else if (!jointOneComplete) {
+        legEnds[singleIncrementIndex][0] = x + jointOneGrowth;
+      }
+      legEnds[singleIncrementIndex][0] += random(3) - 3;
+      if (y < cephalothoraxCenterY & !jointOneComplete) {
+        legEnds[singleIncrementIndex][1] = y - jointOneGrowth;
+      } else {
+        legEnds[singleIncrementIndex][1] = y + jointOneGrowth;
+      }
+      legEnds[singleIncrementIndex][1] += random(3) - 3;
+      line(x, y, legEnds[singleIncrementIndex][0], legEnds[singleIncrementIndex][1]);
+      firstJointEndPoints[singleIncrementIndex][0] = legEnds[singleIncrementIndex][0];
+      firstJointEndPoints[singleIncrementIndex][1] = legEnds[singleIncrementIndex][1];
+    } else {
+      line(x, y, firstJointEndPoints[singleIncrementIndex][0], firstJointEndPoints[singleIncrementIndex][1]);
+      line(firstJointEndPoints[singleIncrementIndex][0], firstJointEndPoints[singleIncrementIndex][1], legEnds[singleIncrementIndex][0] + (random(3) - 3), legEnds[singleIncrementIndex][1] + jointTwoGrowth);
+    }
   }
   endShape(CLOSE);
+  if (jointOneGrowth > 42) {
+    if (jointTwoGrowth < 69)
+      jointTwoGrowth += 0.25;
+  } else
+    jointOneGrowth += 0.25;
 }
 
-float[][] getCephalothoraxDeviations(){
+float[][] getCephalothoraxDeviations() {
   float[][] result = new float[73][2];
-  for(int i = 0; i < result.length; i++){
-    result[i][0] = random(1,15);
-    result[i][1] = random(1,15);
+  for (int i = 0; i < result.length; i++) {
+    result[i][0] = random(1, 6);
+    result[i][1] = random(1, 6);
   }
   return result;
 }
