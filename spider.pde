@@ -16,9 +16,9 @@ void setup()
     legEnds[i][1] = 0;
   }
   frameRate(24);
-  size(420, 420);
+  size(269, 269);
   cephalothoraxCenterX = width/2;
-  cephalothoraxCenterY = height/2;
+  cephalothoraxCenterY = height/2.25;
   background(255, 0, 0);
   smooth();
   drawCephalothorax();
@@ -80,8 +80,8 @@ void drawCephalothorax() {
   float x, y;
   float lastx = -999;
   float lasty = -999;
-  final float JOINT_ONE_LENGTH = 25;
-  final float JOINT_TWO_LENGTH = 42;
+  final float JOINT_ONE_LENGTH = 25 + random(5) - 5;
+  final float JOINT_TWO_LENGTH = 25 + random(5) - 5;
   beginShape();
   int singleIncrementIndex;
   for (float ang = 0; ang <= 360; ang += 5) {
@@ -94,10 +94,12 @@ void drawCephalothorax() {
     lastx = x;
     lasty = y;
     if (lastx > -999) {
+      strokeWeight(1);
       line(x, y, lastx, lasty);
     }
 
     //legs
+    strokeWeight(2.25);
     boolean jointOneComplete = (dist(x, y, legEnds[singleIncrementIndex][0], legEnds[singleIncrementIndex][1]) >= JOINT_ONE_LENGTH) && legEnds[singleIncrementIndex][0] != 0;
     if (!jointOneComplete) {
       if (x < cephalothoraxCenterX & !jointOneComplete) {
